@@ -90,11 +90,6 @@ def register(request):
 			return render(request,'register.html',{'msg':1})
 		else:
 			if password==confirm_password:
-				'''x=UserRegister()
-				x.name=request.POST.get('name')
-				x.email=request.POST.get('email')
-				x.password=request.POST.get('password')
-				x.save()'''
 				length = 4
 				otp = ''.join(str(random.randint(0, 9)) for _ in range(length))
 				print("Your OTP is:", otp)
@@ -277,7 +272,7 @@ def logout(request):
 	return redirect('/login')
 
 def livenews(request):
-	newsapi=NewsApiClient(api_key='5d319ea3828e458a8f68e0d335caf33f')
+	newsapi=NewsApiClient(api_key='your api key')
 	json_data=newsapi.get_everything(q='nlp',language='en',
 		from_param=str(date.today()-datetime.timedelta(days=29)),
 		to=str(date.today()),page_size=18,page=1,sort_by='relevancy')
@@ -426,30 +421,6 @@ def language_detection(request):
 	else:
 		return render(request,'language_detection.html')
 
-
-
-
-
-'''def language_converter(request):
-	if request.method == "POST":
-		data = request.POST.get('text')
-		target_language = request.POST.get('lang')
-		if data and target_language:
-			translator = Translator()
-			translation = translator.translate(data, to_lang=target_language)
-			if translation:
-				res = translation.text
-			else:
-				res = "Translation failed"
-		else:
-			res = "Please provide text and select a target language"
-		return render(request, 'lc_output.html', {'data': data, 'res': res})
-	else:
-		result = LANGUAGES
-		return render(request, 'language_converter.html', {'result': result})'''
-
-
-
 def language_converter(request):
 	if not request.session.has_key('email'):
 		return redirect('/login')
@@ -470,10 +441,6 @@ def language_converter(request):
 		result= googletrans.LANGUAGES
 		return render(request,'language_converter.html',{'result':result})
 
-
-
-
-
 def text_to_pdf(request):
 	if not request.session.has_key('email'):
 		return redirect('/login')
@@ -486,15 +453,7 @@ def text_to_pdf(request):
 		paragraphs = text_content.split('\n\n')
 		for paragraph in paragraphs:
 			pdf.multi_cell(0, 10, txt=paragraph)
-
-		'''lines = text_content.split('\n')
-		for line in lines:
-			pdf.cell(50, 10, txt=line, ln=True, align='L')'''
 		pdf.output(output_example)
-
-		'''language = 'en'
-		x = gTTS(text=text_content, lang=language, slow=False)
-		x.save("./statics/output.mp3")'''
 		return render(request,'ttp_output.html',{'data':text_content})
 	else:
 		return render(request,'text_to_pdf.html')
@@ -736,16 +695,6 @@ def linguistic_analysis(request):
 
 			print("part of speech tagging")
 			return render(request,'la_output.html',{'msg1':msg1,'data':data,'doc':doc,'linguistic':linguistic,'name':name})
-			'''
-		msg=[]
-		for token in doc:
-			if token.pos_ == linguistic:
-				print(f"{token.text}:{token.pos_}")
-				msg.append(f"{token.text}:{token.pos_}")
-			else:
-				print(name +" is not in the text.")
-				msg=name +" is not in the text."
-		'''
 	else:
 		return render(request,'linguistic_analysis.html')
 
@@ -787,21 +736,9 @@ def pdf_to_text(request):
 			f.write(pdf_file.read())
 		reader = PdfReader('statics/uploaded_pdf.pdf')
 		number_of_pages = len(reader.pages)
-		'''text = ''
-		for page in reader.pages:
-			text += page.extract_text()
-		os.remove('statics/uploaded_pdf.pdf')'''
 		return render(request, 'ptt_output.html', {'pages':number_of_pages,'pdf_file':pdf_file})
 	else:
 		return render(request, 'pdf_to_text.html')
-		'''pdf=request.FILES['pdf']
-		reader = PdfReader("pdf")
-		number_of_pages = len(reader.pages)
-		page = reader.pages[1]
-		text = page.extract_text()
-		return render(request,'ptt_output.html',{'msg':text})
-	else:
-		return render(request,'pdf_to_text.html')'''
 
 def ptt_output(request):
 	if not request.session.has_key('email'):
@@ -827,10 +764,6 @@ def pdf_to_audio(request):
 			f.write(pdf_file.read())
 		reader = PdfReader('statics/uploaded_pdf.pdf')
 		number_of_pages = len(reader.pages)
-		'''text = ''
-		for page in reader.pages:
-			text += page.extract_text()
-		os.remove('statics/uploaded_pdf.pdf')'''
 		return render(request, 'pta_output.html', {'pages':number_of_pages,'pdf_file':pdf_file})
 	else:
 		return render(request, 'pdf_to_audio.html')
@@ -859,25 +792,6 @@ def pta_output(request):
 		myobj.save("./statics/pdfread.mp3")
 		yes=1
 		return render(request,'pta_output.html',{'pages':pages,'k':k, 'pdf_file':pdf_file ,'pgno':pgno,'msg':yes})
-
-
-
-	'''if request.method=='POST':
-		pdf_file = request.FILES['pdf']
-		with open('./statics/uploaded_pdf.pdf', 'wb') as f:
-			f.write(pdf_file.read())
-		reader = PdfReader('statics/uploaded_pdf.pdf')
-		number_of_pages = len(reader.pages)
-		text = ''
-		for page in reader.pages:
-			text += page.extract_text()
-		language = 'en'
-		x = gTTS(text=text, lang=language, slow=False)
-		x.save("./statics/output.mp3")
-		return render(request,'pta_output.html')
-	else:
-		return render(request,'pdf_to_audio.html')'''
-
 
 def word_transformation(request):
 	if not request.session.has_key('email'):
